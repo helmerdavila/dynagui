@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-h3 {
-    background-color: aquamarine;
+@font-face {
+  font-family: 'QuicksandMedium';
+  src: url('./fonts/Quicksand-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'QuicksandBold';
+  src: url('./fonts/Quicksand-Bold.ttf') format('truetype');
 }
