@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDatabase } from '@helmerdavila/fontawesomehelmer/pro-light-svg-icons';
+import { faCog, faDatabase } from '@helmerdavila/fontawesomehelmer/pro-light-svg-icons';
 
 const MainScreen = () => {
   return (
@@ -8,25 +8,22 @@ const MainScreen = () => {
       <div className="flex flex-col w-15 bg-zinc-300 shadow-lg items-center justify-between">
         <div>
           <div className="block hover:cursor-pointer p-3 border-l-4 border-zinc-600">
-            <FontAwesomeIcon icon={faDatabase} className="h-8" />
+            <FontAwesomeIcon icon={faDatabase} className="h-8 text-zinc-600" />
           </div>
-          <div className="block hover:cursor-pointer p-3 border-l-4">
-            <FontAwesomeIcon icon={faDatabase} className="h-8" />
+          <div className="block hover:cursor-pointer p-3 border-l-4 border-zinc-300">
+            <FontAwesomeIcon icon={faDatabase} className="h-8 text-zinc-400" />
           </div>
-          <div className="block hover:cursor-pointer p-3 border-l-4">
-            <FontAwesomeIcon icon={faDatabase} className="h-8" />
+          <div className="block hover:cursor-pointer p-3 border-l-4 border-zinc-300">
+            <FontAwesomeIcon icon={faDatabase} className="h-8 text-zinc-400" />
           </div>
-          <div className="block hover:cursor-pointer p-3 border-l-4">
-            <FontAwesomeIcon icon={faDatabase} className="h-8" />
+          <div className="block hover:cursor-pointer p-3 border-l-4 border-zinc-300">
+            <FontAwesomeIcon icon={faDatabase} className="h-8 text-zinc-400" />
           </div>
         </div>
         <div>
           <div className="flex flex-col w-15 bg-zinc-300 shadow-lg items-center">
-            <div className="block hover:cursor-pointer p-3 border-l-4">
-              <FontAwesomeIcon icon={faDatabase} className="h-8" />
-            </div>
-            <div className="block hover:cursor-pointer p-3 border-l-4">
-              <FontAwesomeIcon icon={faDatabase} className="h-8" />
+            <div className="block hover:cursor-pointer p-3 border-l-4 border-zinc-300">
+              <FontAwesomeIcon icon={faCog} className="h-8 text-zinc-400" />
             </div>
           </div>
         </div>
