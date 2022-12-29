@@ -1,0 +1,12 @@
+appId: com.taskalia.dynagui
+productName: My Nextron App
+copyright: Copyright © 2023 Helmer
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null

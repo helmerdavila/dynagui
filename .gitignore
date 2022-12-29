@@ -66,6 +66,9 @@ typings/
 
 # next.js build output
 .next
+*.log
+app
+dist
 
 # nuxt.js build output
 .nuxt
