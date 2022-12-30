@@ -1,96 +1,80 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faDatabase } from '@helmerdavila/fontawesomehelmer/pro-light-svg-icons';
+import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb';
+import { fromIni } from '@aws-sdk/credential-provider-ini';
+import { loadSharedConfigFiles } from '@aws-sdk/shared-ini-file-loader';
+import to from 'await-to-js';
+import os from 'os';
+import crypto from 'crypto';
 
-enum SelectedOptionEnum {
-  DATABASES,
-  DB_1,
-  DB_2,
-  SETTINGS,
+interface DynaguiAwsProfile {
+  uuid: string;
+  profileName: string;
+  regions: string[];
+  awsKey: string;
+  awsSecret: string;
 }
 
-function Home() {
-  const [selectedOption, setSelectedOption] = useState<number>(SelectedOptionEnum.DATABASES);
+const Home = () => {
+  // TODO: Create a class Dynagui Aws Profiles
+  // TODO: Create a class  Dynagui Aws Profile with the interface structure and methods
+  // TODO: Store all aws profiles in memory, file, somewhere
+
+  const [awsProfiles, setAwsProfiles] = useState<DynaguiAwsProfile[]>([]);
+  const loadTables = async () => {
+    const profiles = await loadSharedConfigFiles({ configFilepath: `${os.homedir()}/.aws/config` });
+    const dynaguiAwsProfiles: DynaguiAwsProfile[] = [];
+
+    for (const configFileProfile in profiles.configFile) {
+      const dynaGuiAwsProfile: DynaguiAwsProfile = {
+        uuid: crypto.randomUUID(),
+        awsKey: '',
+        awsSecret: '',
+        profileName: '',
+        regions: [],
+      };
+      console.log(configFileProfile);
+      console.table(profiles.configFile[configFileProfile]);
+      dynaGuiAwsProfile.profileName = configFileProfile;
+      dynaGuiAwsProfile.regions = [profiles.configFile[configFileProfile]['region']];
+      dynaguiAwsProfiles.push(dynaGuiAwsProfile);
+    }
+
+    for (const credentialsProfile in profiles.credentialsFile) {
+      const dynaGuiAwsProfileIndex = dynaguiAwsProfiles.findIndex(
+        (dynauiProfile) => dynauiProfile.profileName === credentialsProfile,
+      );
+      dynaguiAwsProfiles[dynaGuiAwsProfileIndex].awsKey =
+        profiles.credentialsFile[credentialsProfile]['aws_access_key_id'];
+      dynaguiAwsProfiles[dynaGuiAwsProfileIndex].awsSecret =
+        profiles.credentialsFile[credentialsProfile]['aws_secret_access_id'];
+    }
+
+    setAwsProfiles(dynaguiAwsProfiles);
+
+    const dynamoDb = new DynamoDBClient({
+      credentials: fromIni({ configFilepath: `${os.homedir()}/.aws/config` }),
+      region: 'ca-central-1',
+    });
+    console.log('Component is rendering');
+    const [error, tables] = await to(dynamoDb.send(new ListTablesCommand({})));
+    console.table({ error, tables: tables.TableNames });
+  };
 
   return (
-    <React.Fragment>
-      <div className="flex h-screen">
-        <div className="flex flex-col w-15 bg-zinc-300 shadow-lg items-center justify-between">
-          <div>
-            <button
-              className={classNames('block hover:cursor-pointer p-3 border-l-4', {
-                'border-zinc-600': selectedOption === SelectedOptionEnum.DATABASES,
-                'border-zinc-300': selectedOption !== SelectedOptionEnum.DATABASES,
-              })}
-              onClick={() => setSelectedOption(SelectedOptionEnum.DATABASES)}
-            >
-              <FontAwesomeIcon
-                icon={faDatabase}
-                className={classNames('h-8', {
-                  'text-zinc-700': selectedOption === SelectedOptionEnum.DATABASES,
-                  'text-zinc-400': selectedOption !== SelectedOptionEnum.DATABASES,
-                })}
-              />
-            </button>
-            <button
-              className={classNames('block hover:cursor-pointer p-3 border-l-4', {
-                'border-zinc-600': selectedOption === SelectedOptionEnum.DB_1,
-                'border-zinc-300': selectedOption !== SelectedOptionEnum.DB_1,
-              })}
-              onClick={() => setSelectedOption(SelectedOptionEnum.DB_1)}
-            >
-              <FontAwesomeIcon
-                icon={faDatabase}
-                className={classNames('h-8', {
-                  'text-zinc-700': selectedOption === SelectedOptionEnum.DB_1,
-                  'text-zinc-400': selectedOption !== SelectedOptionEnum.DB_1,
-                })}
-              />
-            </button>
-            <button
-              className={classNames('block hover:cursor-pointer p-3 border-l-4', {
-                'border-zinc-600': selectedOption === SelectedOptionEnum.DB_2,
-                'border-zinc-300': selectedOption !== SelectedOptionEnum.DB_2,
-              })}
-              onClick={() => setSelectedOption(SelectedOptionEnum.DB_2)}
-            >
-              <FontAwesomeIcon
-                icon={faDatabase}
-                className={classNames('h-8', {
-                  'text-zinc-700': selectedOption === SelectedOptionEnum.DB_2,
-                  'text-zinc-400': selectedOption !== SelectedOptionEnum.DB_2,
-                })}
-              />
-            </button>
-          </div>
-          <div>
-            <div className="flex flex-col w-15 bg-zinc-300 shadow-lg items-center">
-              <button
-                className={classNames('block hover:cursor-pointer p-3 border-l-4', {
-                  'border-zinc-600': selectedOption === SelectedOptionEnum.SETTINGS,
-                  'border-zinc-300': selectedOption !== SelectedOptionEnum.SETTINGS,
-                })}
-                onClick={() => setSelectedOption(SelectedOptionEnum.SETTINGS)}
-              >
-                <FontAwesomeIcon
-                  icon={faCog}
-                  className={classNames('h-8', {
-                    'text-zinc-700': selectedOption === SelectedOptionEnum.SETTINGS,
-                    'text-zinc-400': selectedOption !== SelectedOptionEnum.SETTINGS,
-                  })}
-                />
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="grow p-5">
-          <h1 className="text-5xl">Hello from the component</h1>
-          <h2 className="font-quicksand-bold">This is a bold component</h2>
-        </div>
-      </div>
-    </React.Fragment>
+    <div className="grow p-5">
+      <h1 className="text-5xl">Hello from the component</h1>
+      <h2 className="font-quicksand-bold">This is a bold component</h2>
+      <button onClick={loadTables} className="bg-black mt-3 text-white rounded-full py-2 px-6">
+        Load profiles
+      </button>
+      <h1 className="text-5xl">Profiles</h1>
+      {awsProfiles.map((profile) => (
+        <span key={profile.uuid} className="block">
+          {profile.profileName}
+        </span>
+      ))}
+    </div>
   );
-}
+};
 
 export default Home;
