@@ -4,10 +4,10 @@
 
 @font-face {
   font-family: 'QuicksandMedium';
-  src: url('./fonts/Quicksand-Medium.ttf') format('truetype');
+  src: url('../fonts/Quicksand-Medium.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'QuicksandBold';
-  src: url('./fonts/Quicksand-Bold.ttf') format('truetype');
+  src: url('../fonts/Quicksand-Bold.ttf') format('truetype');
 }
