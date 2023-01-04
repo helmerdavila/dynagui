@@ -5,6 +5,7 @@ import { loadSharedConfigFiles } from '@aws-sdk/shared-ini-file-loader';
 import to from 'await-to-js';
 import os from 'os';
 import crypto from 'crypto';
+import fs from 'fs';
 
 interface DynaguiAwsProfile {
   uuid: string;
@@ -20,8 +21,50 @@ const Home = () => {
   // TODO: Store all aws profiles in memory, file, somewhere
 
   const [awsProfiles, setAwsProfiles] = useState<DynaguiAwsProfile[]>([]);
+  const [errorConfigFile, setErrorConfigFile] = useState<string>(null);
+  const [successConfigFile, setSuccessConfigFile] = useState<string>(null);
+  const [errorCredentialsFile, setErrorCredentialsFile] = useState<string>(null);
+  const [successCredentialsFile, setSuccessCredentialsFile] = useState<string>(null);
+
+  const getAwsConfigFilePath = (): string => `${os.homedir()}/.aws/config`;
+
+  const getAwsCredentialsPath = (): string => `${os.homedir()}/.aws/credentials`;
+
+  const userHasConfigFile = async () => {
+    const awsConfigFilePath = getAwsConfigFilePath();
+
+    if (!fs.existsSync(awsConfigFilePath)) {
+      setErrorConfigFile(`${awsConfigFilePath} file not found`);
+      return;
+    }
+
+    setSuccessConfigFile('Config file found!');
+  };
+
+  const userHasCredentialsFile = async () => {
+    const awsCredentialsPath = getAwsCredentialsPath();
+
+    if (!fs.existsSync(awsCredentialsPath)) {
+      setErrorCredentialsFile(`${awsCredentialsPath} file not found`);
+      return;
+    }
+
+    setSuccessCredentialsFile('Credentials file found!');
+  };
+
+  const validateAwsFiles = async () => {
+    await userHasConfigFile();
+    await userHasCredentialsFile();
+  };
+
   const loadTables = async () => {
-    const profiles = await loadSharedConfigFiles({ configFilepath: `${os.homedir()}/.aws/config` });
+    const [errLoadSharedConfig, profiles] = await to(loadSharedConfigFiles({ configFilepath: getAwsConfigFilePath() }));
+
+    if (errLoadSharedConfig) {
+      console.error(errLoadSharedConfig);
+      return;
+    }
+
     const dynaguiAwsProfiles: DynaguiAwsProfile[] = [];
 
     for (const configFileProfile in profiles.configFile) {
@@ -62,9 +105,22 @@ const Home = () => {
 
   return (
     <div className="grow p-5">
-      <h1 className="text-5xl">Hello from the component</h1>
-      <h2 className="font-quicksand-bold">This is a bold component</h2>
-      <button onClick={loadTables} className="bg-black mt-3 text-white rounded-full py-2 px-6">
+      <h1 className="text-4xl mb-3">Dashboard</h1>
+      {errorConfigFile ? (
+        <section className="mb-3 bg-red-200 text-red-600 w-full px-6 py-4 rounded-2xl">{errorConfigFile}</section>
+      ) : null}
+      {successConfigFile ? (
+        <section className="mb-3 bg-green-200 text-green-600 w-full px-6 py-4 rounded-2xl">{successConfigFile}</section>
+      ) : null}
+      {errorCredentialsFile ? (
+        <section className="bg-red-200 text-red-600 w-full px-6 py-4 rounded-2xl">{errorCredentialsFile}</section>
+      ) : null}
+      {successCredentialsFile ? (
+        <section className="mb-3 bg-green-200 text-green-600 w-full px-6 py-4 rounded-2xl">
+          {successCredentialsFile}
+        </section>
+      ) : null}
+      <button onClick={validateAwsFiles} className="bg-black mt-3 text-white rounded-full py-2 px-6">
         Load profiles
       </button>
       <h1 className="text-5xl">Profiles</h1>
