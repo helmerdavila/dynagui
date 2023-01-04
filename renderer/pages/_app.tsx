@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app';
 import '../styles/globals.css';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faDatabase } from '@helmerdavila/fontawesomehelmer/pro-light-svg-icons';
+import { faCog, faDatabase, faHome } from '@helmerdavila/fontawesomehelmer/pro-light-svg-icons';
 import Link from 'next/link';
 
 enum SelectedOptionEnum {
@@ -22,15 +22,15 @@ function MyApp({ Component, pageProps }: AppProps) {
         <div>
           <Link href="home">
             <button
-              className={classNames('block hover:cursor-pointer p-3 border-l-4', {
+              className={classNames('block hover:cursor-pointer p-3 border-l-4 text-2xl', {
                 'border-zinc-600': selectedOption === SelectedOptionEnum.DATABASES,
                 'border-zinc-300': selectedOption !== SelectedOptionEnum.DATABASES,
               })}
               onClick={() => setSelectedOption(SelectedOptionEnum.DATABASES)}
             >
               <FontAwesomeIcon
-                icon={faDatabase}
-                className={classNames('h-8', {
+                icon={faHome}
+                className={classNames('fa-fw', {
                   'text-zinc-700': selectedOption === SelectedOptionEnum.DATABASES,
                   'text-zinc-400': selectedOption !== SelectedOptionEnum.DATABASES,
                 })}
@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </button>
           </Link>
           <button
-            className={classNames('block hover:cursor-pointer p-3 border-l-4', {
+            className={classNames('block hover:cursor-pointer p-3 border-l-4 text-2xl', {
               'border-zinc-600': selectedOption === SelectedOptionEnum.DB_1,
               'border-zinc-300': selectedOption !== SelectedOptionEnum.DB_1,
             })}
@@ -46,14 +46,14 @@ function MyApp({ Component, pageProps }: AppProps) {
           >
             <FontAwesomeIcon
               icon={faDatabase}
-              className={classNames('h-8', {
+              className={classNames('fa-fw', {
                 'text-zinc-700': selectedOption === SelectedOptionEnum.DB_1,
                 'text-zinc-400': selectedOption !== SelectedOptionEnum.DB_1,
               })}
             />
           </button>
           <button
-            className={classNames('block hover:cursor-pointer p-3 border-l-4', {
+            className={classNames('block hover:cursor-pointer p-3 border-l-4 text-2xl', {
               'border-zinc-600': selectedOption === SelectedOptionEnum.DB_2,
               'border-zinc-300': selectedOption !== SelectedOptionEnum.DB_2,
             })}
@@ -61,7 +61,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           >
             <FontAwesomeIcon
               icon={faDatabase}
-              className={classNames('h-8', {
+              className={classNames('fa-fw', {
                 'text-zinc-700': selectedOption === SelectedOptionEnum.DB_2,
                 'text-zinc-400': selectedOption !== SelectedOptionEnum.DB_2,
               })}
@@ -72,7 +72,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <div className="flex flex-col w-15 bg-zinc-300 shadow-lg items-center">
             <Link href="settings">
               <button
-                className={classNames('block hover:cursor-pointer p-3 border-l-4', {
+                className={classNames('block hover:cursor-pointer p-3 border-l-4 text-2xl', {
                   'border-zinc-600': selectedOption === SelectedOptionEnum.SETTINGS,
                   'border-zinc-300': selectedOption !== SelectedOptionEnum.SETTINGS,
                 })}
@@ -80,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               >
                 <FontAwesomeIcon
                   icon={faCog}
-                  className={classNames('h-8', {
+                  className={classNames('fa-fw', {
                     'text-zinc-700': selectedOption === SelectedOptionEnum.SETTINGS,
                     'text-zinc-400': selectedOption !== SelectedOptionEnum.SETTINGS,
                   })}
