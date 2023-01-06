@@ -25,6 +25,7 @@ const Home = () => {
   const [successConfigFile, setSuccessConfigFile] = useState<string>(null);
   const [errorCredentialsFile, setErrorCredentialsFile] = useState<string>(null);
   const [successCredentialsFile, setSuccessCredentialsFile] = useState<string>(null);
+  const [tables, setTables] = useState<string[]>([]);
 
   const getAwsConfigFilePath = (): string => `${os.homedir()}/.aws/config`;
 
@@ -55,13 +56,13 @@ const Home = () => {
   const validateAwsFiles = async () => {
     await userHasConfigFile();
     await userHasCredentialsFile();
+    await loadTables();
   };
 
   const loadTables = async () => {
     const [errLoadSharedConfig, profiles] = await to(loadSharedConfigFiles({ configFilepath: getAwsConfigFilePath() }));
 
     if (errLoadSharedConfig) {
-      console.error(errLoadSharedConfig);
       return;
     }
 
@@ -75,8 +76,6 @@ const Home = () => {
         profileName: '',
         regions: [],
       };
-      console.log(configFileProfile);
-      console.table(profiles.configFile[configFileProfile]);
       dynaGuiAwsProfile.profileName = configFileProfile;
       dynaGuiAwsProfile.regions = [profiles.configFile[configFileProfile]['region']];
       dynaguiAwsProfiles.push(dynaGuiAwsProfile);
@@ -98,9 +97,8 @@ const Home = () => {
       credentials: fromIni({ configFilepath: `${os.homedir()}/.aws/config` }),
       region: 'ca-central-1',
     });
-    console.log('Component is rendering');
     const [error, tables] = await to(dynamoDb.send(new ListTablesCommand({})));
-    console.table({ error, tables: tables.TableNames });
+    setTables(tables.TableNames);
   };
 
   return (
@@ -123,10 +121,12 @@ const Home = () => {
       <button onClick={validateAwsFiles} className="bg-black mt-3 text-white rounded-full py-2 px-6">
         Load profiles
       </button>
-      <h1 className="text-5xl">Profiles</h1>
-      {awsProfiles.map((profile) => (
-        <span key={profile.uuid} className="block">
-          {profile.profileName}
+      <section>
+        <h2 className="text-2xl">Profiles</h2>
+      </section>
+      {tables.map((table, index) => (
+        <span key={index} className="block">
+          {table}
         </span>
       ))}
     </div>
